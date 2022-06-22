@@ -16,6 +16,7 @@ import {
     where,
     addDoc,
 } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 const firebaseConfig = {
     apiKey: "AIzaSyBH8XZTbkxauiyEfhLEI20YXJcIBOcd1Cs",
     authDomain: "vaofd-f801b.firebaseapp.com",
@@ -29,25 +30,29 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
-const signInWithGoogle = async () => {
+const signInWithGoogle = () => new Promise(async (resolve, reject) => {
+
     try {
         const res = await signInWithPopup(auth, googleProvider);
         const user = res.user;
         const q = query(collection(db, "users"), where("uid", "==", user.uid));
         const docs = await getDocs(q);
-        if (docs.docs.length === 0) {
-            await addDoc(collection(db, "users"), {
-                uid: user.uid,
-                name: user.displayName,
-                authProvider: "google",
-                email: user.email,
-            });
+        const userData = {
+            uid: user.uid,
+            name: user.displayName,
+            authProvider: "google",
+            email: user.email,
         }
+        if (docs.docs.length === 0) {
+            await addDoc(collection(db, "users"), userData);
+        }
+        resolve(userData);
     } catch (err) {
+        reject(err);
         console.error(err);
         alert(err.message);
     }
-};
+});
 const logInWithEmailAndPassword = ({ email, password }) => new Promise(async (resolve, reject) => {
     try {
         await signInWithEmailAndPassword(auth, email, password);

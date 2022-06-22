@@ -47,6 +47,19 @@ export default function SignIn() {
         }
     };
 
+    const signinGoogle = async () => {
+        try {
+            const user = await signInWithGoogle();
+            console.log("user", user);
+            if (user) {
+                localStorage.setItem("user", JSON.stringify(user))
+                navigate('/dashboard', { replace: true })
+            }
+        } catch (error) {
+            // alert("Error registering user")
+        }
+    }
+
     React.useEffect(() => {
         if (email) navigate('/dashboard', { replace: true })
     }, [])
@@ -107,7 +120,7 @@ export default function SignIn() {
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
-                        onClick={signInWithGoogle}
+                        onClick={signinGoogle}
                     >
                         Login with google
                     </Button>
