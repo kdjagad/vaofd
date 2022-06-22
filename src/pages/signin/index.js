@@ -56,7 +56,7 @@ export default function SignIn() {
                 navigate('/dashboard', { replace: true })
             }
         } catch (error) {
-            // alert("Error registering user")
+            alert("Error registering user")
         }
     }
 
